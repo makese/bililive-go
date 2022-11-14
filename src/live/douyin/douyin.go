@@ -37,7 +37,7 @@ type Live struct {
 }
 
 func (l *Live) getData() (*gjson.Result, error) {
-	resp, err := requests.Get(l.Url.String(), live.CommonUserAgent)
+	resp, err := requests.Get(l.Url.String(), live.CommonUserAgent, requests.Header("authority", "v.douyin.com"), requests.Cookie("__ac_nonce", "063720938001349f615f4"), requests.Cookie("__ac_signature", "_02B4Z6wo00f01B9QQ2wAAIDAn1K5LmQh-uAfcEfAAGSspFnA-q5Vsa68bhz.1GNJQKTgT95ryMvZcVRU1VDhu6RYUol2Ho386R7Rdmx36uVTAbEYoh96BoNOfx2DzGUvss768OO.ktLKd.VM64"))
 	if err != nil {
 		return nil, err
 	}
@@ -72,9 +72,9 @@ func (l *Live) GetInfo() (info *live.Info, err error) {
 	}
 	info = &live.Info{
 		Live:     l,
-		HostName: data.Get("initialState.roomStore.roomInfo.room.owner.nickname").String(),
-		RoomName: data.Get("initialState.roomStore.roomInfo.room.title").String(),
-		Status:   data.Get("initialState.roomStore.roomInfo.room.status").Int() == 2,
+		HostName: data.Get("app.initialState.roomStore.roomInfo.anchor.nickname").String(),
+		RoomName: data.Get("app.initialState.roomStore.roomInfo.room.title").String(),
+		Status:   data.Get("app.initialState.roomStore.roomInfo.room.status").Int() == 2,
 	}
 	return
 }
@@ -85,7 +85,7 @@ func (l *Live) GetStreamUrls() (us []*url.URL, err error) {
 		return nil, err
 	}
 	var urls []string
-	data.Get("initialState.roomStore.roomInfo.room.stream_url.flv_pull_url").ForEach(func(key, value gjson.Result) bool {
+	data.Get("app.initialState.roomStore.roomInfo.room.stream_url.flv_pull_url").ForEach(func(key, value gjson.Result) bool {
 		urls = append(urls, value.String())
 		return true
 	})
